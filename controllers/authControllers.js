@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User');
+const bcrypt = require('bcrypt')
 
 const handleErrors = error => {
     console.log(error.message, error.code)
@@ -25,7 +26,7 @@ const handleErrors = error => {
 exports.signup = async (req, res) => {
     const { email, password } = req.body;
     try {
-        const newUser = await User.create({ email: email, password: password })
+        const newUser = await User.create({ email: email, password: await bcrypt.hash(password, 10) })
         return res.status(201).json(newUser)
     } catch (error) {
         res.status(500).send(handleErrors(error))
@@ -40,7 +41,7 @@ exports.login = async (req, res) => {
         if (!foundUser) {
             return res.status(404).send("User not found")
         }
-        if (foundUser.password !== userPassword) {
+        if (!await bcrypt.compare(userPassword, foundUser.password)) {
             return res.status(400).send("Passwords do not match")
         }
         const authToken = jwt.sign(
