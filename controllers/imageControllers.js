@@ -1,6 +1,5 @@
 const short = require('short-uuid');
 const multer = require('multer')
-// const upload = multer({ dest: 'uploads' }); // upload without local storage 1
 
 const upload = multer({ dest: 'uploads', limits: { fileSize: 1024 * 1024 } }).single('image'); // upload without local storage 2
 

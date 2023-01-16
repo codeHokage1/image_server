@@ -8,13 +8,13 @@ This node application allows users to signup and login in order to upload images
 
 ## Routes
 ```
-## /signup POST
+## /auth/signup POST
 {
     "email": "xyz@gmail.com",
     "password": "test1234"
 }
 
-## /login POST
+## /auth/login POST
 {
     "email": "xyz@gmail.com",
     "password": "test1234"
@@ -25,7 +25,7 @@ This node application allows users to signup and login in order to upload images
 ## /image/upload POST
 Add image as file with name field: "image"
 
-## /logout GET
+## /auth/logout GET
 ```
 
 ## How to use:
