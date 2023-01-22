@@ -9,7 +9,7 @@ const imageRoutes = require('./routes/imageRoutes')
 const connectDBAndListen = require('./config/dbConfig')
 
 app.use(express.json());
-app.use(express.static('./uploads'))
+app.use(express.static('uploads'))
 app.use(cookieParser())
 
 app.get('/', (req, res) => {

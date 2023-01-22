@@ -25,6 +25,9 @@ const handleErrors = error => {
 
 exports.signup = async (req, res) => {
     const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).send("Email and/or password not provided")
+    }
     try {
         const newUser = await User.create({ email: email, password: await bcrypt.hash(password, 10) })
         return res.status(201).json(newUser)
@@ -36,6 +39,9 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     const userEmail = req.body.email;
     const userPassword = req.body.password;
+    if (!userEmail || !userPassword) {
+        return res.status(400).send("Email and/or Password not provided")
+    }
     try {
         const foundUser = await User.findOne({ email: userEmail });
         if (!foundUser) {
@@ -47,9 +53,9 @@ exports.login = async (req, res) => {
         const authToken = jwt.sign(
             { email: foundUser.email },
             process.env.AUTH_TOKEN,
-            { expiresIn: 120 }
+            { expiresIn: 3600 }
         )
-        res.cookie('jwt', authToken, {httpOnly: true, maxAge: 120 * 1000})
+        res.cookie('jwt', authToken, {httpOnly: true, maxAge: 3600 * 1000})
         res.status(200).json({foundUser, jwt: authToken});
     } catch (error) {
         res.status(500).send(handleErrors(error));
