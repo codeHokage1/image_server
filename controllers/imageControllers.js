@@ -1,13 +1,6 @@
 const short = require('short-uuid');
-const multer = require('multer')
-const sharp = require('sharp');
-
-const upload = multer({ dest: 'uploads', limits: { fileSize: 1024 * 1024 } }).single('image'); // upload without local storage 2
-
 const path = require('path')
-
 const Image = require('../models/Image')
-
 
 
 exports.getImage = async (req, res) => {
@@ -18,7 +11,7 @@ exports.getImage = async (req, res) => {
             return res.status(404).send("Image not found")
         }
 
-        res.sendFile(path.join(__dirname, '..', foundImage.path))
+        res.sendFile(path.join(__dirname, '..', 'uploads', foundImage.imageName))
     } catch (error) {
         console.log(error.message)
         res.status(500).json({
@@ -30,41 +23,34 @@ exports.getImage = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
 
-    upload(req, res, async function (err) {
-        if (err instanceof multer.MulterError) {
-
-          // A Multer error occurred when uploading.
-            return res.status(400).send("File must not be more than 1mb")
-        } else if (err) {
-
-          // An unknown error occurred when uploading.
-          return res.status(400).send("Another unknown Error" + err)
-        }
-
-        // Everything went fine.
-
-        const newImage = {
-            imageId: short.generate(),
-            originalName: req.file.originalname,
-            path: req.file.path
-        }
-        try {            
-            const sentImage = await Image.create(newImage);
-            return res.status(201).json({
-                message: "Image uploaded successfully",
-                image: {
-                    imageId: sentImage.imageId,
-                    originalName: sentImage.originalName
-                }
-            })
-        } catch (error) {
-            console.log(error.message)
-            res.status(500).json({
-                message: "Internal error",
-                error
-            })
+    const filePath = path.join(__dirname, '..', 'uploads', req.files.image.name);
+    req.files.image.mv(filePath, err => {
+        if (err) {
+            return res.status(500).send('Server error: ' + err.message)
         }
     })
+    const newImage = {
+        imageId: short.generate(),
+        imageName: req.files.image.name,
+        imageSize: req.files.image.size
+    }
+    try {            
+        const sentImage = await Image.create(newImage);
+        return res.status(201).json({
+            message: "Image uploaded successfully",
+            image: {
+                imageId: sentImage.imageId,
+                imageName: sentImage.imageName,
+                imageSize: req.files.image.size
+            }
+        })
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({
+            message: "Internal error",
+            error
+        })
+    }
 }
 
 

@@ -53,9 +53,9 @@ exports.login = async (req, res) => {
         const authToken = jwt.sign(
             { email: foundUser.email },
             process.env.AUTH_TOKEN,
-            { expiresIn: 3600 }
+            { expiresIn: 3600 * 60 }
         )
-        res.cookie('jwt', authToken, {httpOnly: true, maxAge: 3600 * 1000})
+        res.cookie('jwt', authToken, { httpOnly: true, maxAge: 3600 * 60 * 1000 });
         res.status(200).json({foundUser, jwt: authToken});
     } catch (error) {
         res.status(500).send(handleErrors(error));
