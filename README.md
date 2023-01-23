@@ -29,6 +29,10 @@ Add image as file with name field: "image"
 ```
 
 ## How to use:
+### Option A - Using deployed project
+1. With Postman(/Thunder Client, or any other API Testing client), send requests to routes as stated above, appending the URL: **https://image-server-wd3v.onrender.com**
+
+### Option B - Running from your local machine
 1. Clone, Fork or Download Repo
 2. Add a **.env** file to the root directory of the root project.
    Include the following environment variables:
@@ -54,7 +58,7 @@ Add image as file with name field: "image"
 2. ExpressJS
 3. MongoDB and Mongoose
 4. Validator
-5. Multer
+5. Express-fileupload
 6. Bcrypt
 7. Cookie-Parser
 8. JWt
